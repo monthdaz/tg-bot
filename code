@@ -1,0 +1,68 @@
+from telegram.ext import *
+from telegram import *
+import logging
+import os
+from xlwt import Workbook
+import xlrd
+
+#---------------------------#
+book = xlrd.open_workbook('D:\work.xls')
+sheet = book.sheet_by_index(0)
+#---------------------------#
+
+
+
+
+
+updater = Updater('5140503510:AAGt7wz4oKRdVj8YGZExJVqsbA54EHu9KT0', use_context=True)
+dispatcher = updater.dispatcher
+
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+chats = []
+
+def start_bot(update, context):
+    for chad in chats:
+      buttons = [[KeyboardButton("Allow")], [KeyboardButton("Deny")]]
+      context.bot.send_message(chat_id=chad, text="Welcome to my bot!",reply_markup=ReplyKeyboardMarkup(buttons))
+
+def start(update,context):
+    buttons = [[KeyboardButton("/allow")], [KeyboardButton("/deny")],[KeyboardButton("/check")]]
+    update.message.reply_text(text="Welcome to my bot!", reply_markup=ReplyKeyboardMarkup(buttons))
+
+
+def repeater(update, context):
+    return update.message.text
+
+
+def deny(update,context):
+    return
+
+def work(update,context):
+    init = update.callback_query.data
+    chat_id = update.callback_query.message.chat.id
+    valus = sheet.col_values(1, 1)
+    worker = sheet.col_values(2, 1)
+    count = 0
+    inline_buttons = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Allow', callback_data="jopa")], [InlineKeyboardButton(text = "Deny",callback_data="gay")]])
+    for word in valus:
+        count = count+1
+        if word == "False":
+            txt = sheet.cell_value(count,0)
+            update.callback_query.bot.send_message(chat_id=chat_id,text=txt, reply_markup=inline_buttons)
+
+    return(count)
+
+dispatcher.add_handler(CommandHandler('allow', deny))
+dispatcher.add_handler(CommandHandler('deny', deny))
+dispatcher.add_handler(CommandHandler('start', start))
+dispatcher.add_handler(CommandHandler('check', work))
+dispatcher.add_handler(CallbackQueryHandler(CallbackContext,repeater))
+
+dispatcher.add_handler(MessageHandler(Filters.text, repeater))
+updater.start_polling()
+
+updater.idle()
+
+start_bot()
