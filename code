@@ -14,7 +14,7 @@ sheet = book.sheet_by_index(0)
 
 
 
-updater = Updater('5140503510:AAGt7wz4oKRdVj8YGZExJVqsbA54EHu9KT0', use_context=True)
+updater = Updater('your token', use_context=True)
 dispatcher = updater.dispatcher
 
 logging.basicConfig(level=logging.DEBUG,
